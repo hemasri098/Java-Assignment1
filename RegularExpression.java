@@ -1,38 +1,61 @@
-package com.company;
+
 import java.util.*;
+import java.util.logging.Logger;
 import java.io.*;
-import java.lang.*;
 import java.util.regex.Pattern;
 
 
 public class RegularExpression {
-    public static void returnListofFiles(String directory, String exp) {
+	
+	// to search for files in given directory
+	public static File[] searchFilesInDirectory(String directory) {
         File dir = new File(directory);
-        File []filesinDir = dir.listFiles();
-        //List <String>paths = new ArrayList<String>();
-        //System.out.println(filesinDir);
-        if(filesinDir.length > 0){
-            for (File file : filesinDir) {
-                //System.out.println(file.getName());
-                Pattern p = Pattern.compile(exp);
-                //System.out.println(p.pattern());
-                if (file.isFile() && Pattern.matches(exp, file.getName())) {
-                    System.out.println(file.getAbsolutePath());
-                } else if (file.isDirectory()) {
+        File []files = dir.listFiles(); // returns list of files in a specified directory
+        return files;
+    }
+	
+    // to check for filename which matched with given regular expression
+    public static boolean ifPatternMatches(String expression, String fileName) {
+        if(Pattern.matches(expression, fileName)) 
+            return true;
+        return false;
+    }
+
+    // returns all the paths of files
+    public static void returnListofFilePaths(String directory, String expression){
+    	Logger LOGGER = Logger.getAnonymousLogger();
+        File []files = searchFilesInDirectory(directory);
+        try{
+            for (File file : files) {
+            	// checking whether is it a file type and return file if it matches with given regular expression
+                if (file.isFile() && ifPatternMatches(expression, file.getName())) {
+                	LOGGER.info(file.getAbsolutePath());
+                } 
+                // if it is directory type searching inside the directory
+                else if (file.isDirectory()) {  		
                     String folderpath = file.getAbsolutePath();
-                    returnListofFiles(folderpath, exp);
+                    returnListofFilePaths(folderpath, expression);    
                 }
             }
         }
-    }
-    public static void main(String[] args) {
-	// write your code here
-        Scanner sc = new Scanner(System.in);
-        String exp = "*linux*";
-        while((exp = sc.next()).length() > 0) {
-            //System.out.println(exp);
-            returnListofFiles("/home", exp);
+        catch(NullPointerException e) {
+            LOGGER.info("No such Files Found with that expression in the path " + directory);
         }
-
     }
+    
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Logger LOGGER = Logger.getAnonymousLogger();
+        LOGGER.info("Enter regular expression to search for files \nEnter STOPSEARCH to stop");
+        String expression = "^.*\\.txt$";
+        while((expression = sc.next()).length() > 0) { 
+        	if(!(expression).equals("STOPSEARCH"))              // takes input continuously until I enter STOPSEARCH
+        		returnListofFilePaths("/home", expression);
+        	else {
+        		LOGGER.info("search stopped");
+        		break;
+        	}
+        }
+    }
+
 }
