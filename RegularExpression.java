@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.regex.Pattern;
 
 
-public class RegularExpression {
+public class FilePaths {
 	
 	// to search for files in given directory
 	public static File[] searchFilesInDirectory(String directory) {
@@ -43,7 +43,7 @@ public class RegularExpression {
         }
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
         Scanner sc = new Scanner(System.in);
         Logger LOGGER = Logger.getAnonymousLogger();
         LOGGER.info("Enter regular expression to search for files \nEnter STOPSEARCH to stop");
